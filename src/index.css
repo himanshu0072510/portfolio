@@ -1,57 +1,48 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------ *
- * Design tokens
- * Semantic vars flip between .dark and .light on <html>.
+ * Design tokens — "blueprint" duotone
+ *
+ * Dark  : chalk on prussian blue, as a technical drawing on blueprint.
+ * Light : navy ink on pale drafting film.
+ * Colour is a material here (chalk, ink, film), not decoration — so the
+ * palette is duotone with a single accent, used sparingly and on purpose.
  * ------------------------------------------------------------------ */
 :root,
 .dark {
-  --bg: #0b0b0d;
-  --bg-soft: #111114;
-  --surface: #16161a;
-  --surface-hi: #1d1d22;
-  --border: #26262d;
-  --border-soft: #1e1e24;
-  --fg: #f2f2f4;
-  --fg-soft: #c9c9d1;
-  --muted: #8b8b98;
-  --accent: #ff5c39;
-  --accent-soft: #ff8a6d;
-  --accent-fg: #140803;
-  --accent-ring: rgba(255, 92, 57, 0.18);
-  --grid-line: rgba(255, 255, 255, 0.035);
-  --glow: rgba(255, 92, 57, 0.14);
-  --shadow-color: 0 0 0 rgba(0, 0, 0, 0);
-
-  --heat-0: #212127;
-  --heat-1: #0e4429;
-  --heat-2: #006d32;
-  --heat-3: #26a641;
-  --heat-4: #39d353;
+  --bg: #081726;
+  --bg-soft: #0b1e30;
+  --surface: #0c2033;
+  --surface-hi: #14304a;
+  --border: #466786;
+  --border-soft: #1c3d59;
+  --rule: #466d8a;
+  --rule-soft: #234b6b;
+  --fg: #e6f0f7;
+  --fg-soft: #afc6d8;
+  --muted: #7f99ad;
+  --accent: #ff7a4d;
+  --accent-fg: #170702;
+  --grid-line: rgba(230, 240, 247, 0.045);
+  --sheet-line: rgba(230, 240, 247, 0.075);
 }
 
 .light {
-  --bg: #faf9f6;
-  --bg-soft: #f3f1ec;
-  --surface: #ffffff;
-  --surface-hi: #f7f6f2;
-  --border: #e3e0d9;
-  --border-soft: #eceae4;
-  --fg: #15151a;
-  --fg-soft: #3d3d46;
-  --muted: #6e6e79;
-  --accent: #d33a13;
-  --accent-soft: #b53010;
-  --accent-fg: #fff6f2;
-  --accent-ring: rgba(211, 58, 19, 0.14);
-  --grid-line: rgba(0, 0, 0, 0.04);
-  --glow: rgba(211, 58, 19, 0.08);
-
-  --heat-0: #e9e7e1;
-  --heat-1: #c7eccd;
-  --heat-2: #7bd495;
-  --heat-3: #40c463;
-  --heat-4: #1a7f37;
+  --bg: #dce6ee;
+  --bg-soft: #d3dee8;
+  --surface: #edf3f8;
+  --surface-hi: #ffffff;
+  --border: #738492;
+  --border-soft: #c3d0da;
+  --rule: #738594;
+  --rule-soft: #b0bfcb;
+  --fg: #0b1b2a;
+  --fg-soft: #35495c;
+  --muted: #48606f;
+  --accent: #a63508;
+  --accent-fg: #fff3ec;
+  --grid-line: rgba(11, 27, 42, 0.05);
+  --sheet-line: rgba(11, 27, 42, 0.07);
 }
 
 @theme inline {
@@ -61,20 +52,59 @@
   --color-surface-hi: var(--surface-hi);
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
   --color-fg: var(--fg);
   --color-fg-soft: var(--fg-soft);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
   --color-accent-fg: var(--accent-fg);
 
-  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: 'Chivo', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Chivo Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --animate-marquee: marquee 38s linear infinite;
-  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
+  --animate-draw: draw 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
+  --animate-nib: nib 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
+  --animate-rise: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-marquee: marquee 42s linear infinite;
+}
+
+@keyframes draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes nib {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes marquee {
@@ -83,29 +113,6 @@
   }
   to {
     transform: translateX(-50%);
-  }
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-ring {
-  0% {
-    box-shadow: 0 0 0 0 var(--accent-ring);
-  }
-  70% {
-    box-shadow: 0 0 0 14px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
   }
 }
 
@@ -119,6 +126,7 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -130,6 +138,7 @@
     *::before,
     *::after {
       animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
@@ -139,8 +148,8 @@
     background-color: var(--bg);
     color: var(--fg);
     font-family: var(--font-sans);
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
     overflow-x: hidden;
   }
 
@@ -152,7 +161,7 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 
   ::-webkit-scrollbar {
@@ -163,9 +172,9 @@
     background: var(--bg);
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--border);
+    background: var(--rule);
     border-radius: 99px;
-    border: 2px solid var(--bg);
+    border: 3px solid var(--bg);
   }
   ::-webkit-scrollbar-thumb:hover {
     background: var(--muted);
@@ -175,42 +184,36 @@
 /* ------------------------------------------------------------------ *
  * Utilities
  * ------------------------------------------------------------------ */
-@utility grid-bg {
-  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-  background-size: 64px 64px;
+
+/** The faint grid of a drawing sheet. */
+@utility sheet-grid {
+  background-image: linear-gradient(var(--sheet-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--sheet-line) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
-@utility text-gradient {
-  background-image: linear-gradient(
-    to bottom,
-    var(--fg) 0%,
-    color-mix(in oklab, var(--fg) 74%, transparent) 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-}
-
-/* Faint outline text used behind the hero name. */
-@utility outline-text {
-  color: transparent;
-  -webkit-text-stroke: 1px color-mix(in oklab, var(--fg) 22%, transparent);
+/** A hairline rule that fades out at the right — a leader line, not a divider box. */
+@utility leader {
+  background-image: linear-gradient(to right, var(--rule) 0%, var(--rule) 55%, transparent 100%);
+  height: 1px;
 }
 
 @utility mask-fade-x {
   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
 }
 
-@utility reveal {
-  opacity: 0;
-  transform: translateY(22px);
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+/** The nib that travels along the stroke while it is being drawn. */
+@utility nib-travel {
+  offset-path: var(--stroke-path);
+  offset-rotate: auto;
+  animation: nib 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
 }
 
-@utility reveal-in {
-  opacity: 1;
-  transform: translateY(0);
+/** Small caps used for measurement labels — never for decoration. */
+@utility measure {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
 }

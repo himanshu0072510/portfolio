@@ -9,7 +9,8 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "typecheck": "tsc -b --pretty false",
-    "fetch:github": "node scripts/fetch-github.mjs"
+    "fetch:github": "node scripts/fetch-github.mjs",
+    "generate:stroke": "node scripts/generate-stroke.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.61.0",
