@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+/* ------------------------------------------------------------------ *
+ * Design tokens
+ * Semantic vars flip between .dark and .light on <html>.
+ * ------------------------------------------------------------------ */
+:root,
+.dark {
+  --bg: #0b0b0d;
+  --bg-soft: #111114;
+  --surface: #16161a;
+  --surface-hi: #1d1d22;
+  --border: #26262d;
+  --border-soft: #1e1e24;
+  --fg: #f2f2f4;
+  --fg-soft: #c9c9d1;
+  --muted: #8b8b98;
+  --accent: #ff5c39;
+  --accent-soft: #ff8a6d;
+  --accent-fg: #140803;
+  --accent-ring: rgba(255, 92, 57, 0.18);
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --glow: rgba(255, 92, 57, 0.14);
+  --shadow-color: 0 0 0 rgba(0, 0, 0, 0);
+
+  --heat-0: #212127;
+  --heat-1: #0e4429;
+  --heat-2: #006d32;
+  --heat-3: #26a641;
+  --heat-4: #39d353;
+}
+
+.light {
+  --bg: #faf9f6;
+  --bg-soft: #f3f1ec;
+  --surface: #ffffff;
+  --surface-hi: #f7f6f2;
+  --border: #e3e0d9;
+  --border-soft: #eceae4;
+  --fg: #15151a;
+  --fg-soft: #3d3d46;
+  --muted: #6e6e79;
+  --accent: #d33a13;
+  --accent-soft: #b53010;
+  --accent-fg: #fff6f2;
+  --accent-ring: rgba(211, 58, 19, 0.14);
+  --grid-line: rgba(0, 0, 0, 0.04);
+  --glow: rgba(211, 58, 19, 0.08);
+
+  --heat-0: #e9e7e1;
+  --heat-1: #c7eccd;
+  --heat-2: #7bd495;
+  --heat-3: #40c463;
+  --heat-4: #1a7f37;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-surface: var(--surface);
+  --color-surface-hi: var(--surface-hi);
+  --color-border: var(--border);
+  --color-border-soft: var(--border-soft);
+  --color-fg: var(--fg);
+  --color-fg-soft: var(--fg-soft);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-fg: var(--accent-fg);
+
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --animate-marquee: marquee 38s linear infinite;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent-ring);
+  }
+  70% {
+    box-shadow: 0 0 0 14px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 99px;
+    border: 2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+@utility grid-bg {
+  background-image: linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(
+    to bottom,
+    var(--fg) 0%,
+    color-mix(in oklab, var(--fg) 74%, transparent) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Faint outline text used behind the hero name. */
+@utility outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--fg) 22%, transparent);
+}
+
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+@utility reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@utility reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}

@@ -1,0 +1,137 @@
+# Portfolio — Himanshu Agrahari
+
+A portfolio site built with **Vite + React + TypeScript + Tailwind CSS v4**.
+GitHub is wired in two ways, and Gmail is the contact channel.
+
+| Feature | How it works |
+| --- | --- |
+| **GitHub profile & repos** | Fetched live from the public REST API in the browser, with a baked snapshot as fallback |
+| **Contribution graph** | Fetched at build time over GraphQL (needs a token) and stored in `src/data/github.json` |
+| **Repo counts, stars, languages** | Read from the live API — never hardcoded |
+| **Contact form** | Posts to Formspree, which delivers straight to your Gmail inbox |
+| **Contact fallback** | If no Formspree id is set, the form hands off to a prefilled `mailto:` |
+| **Direct email** | `imhimanshu758@gmail.com` is linked from the nav, hero, contact and footer |
+
+---
+
+## Quick start
+
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run build      # typecheck + production build into dist/
+npm run preview    # serve the production build
+npm run fetch:github   # refresh src/data/github.json
+```
+
+## Configuration
+
+Copy the example env file and fill in what you need:
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Needed? | Purpose |
+| --- | --- | --- |
+| `VITE_FORMSPREE_ID` | For the form | Your Formspree form id, e.g. `abcdwxyz` → the form posts to `https://formspree.io/f/abcdwxyz` |
+| `VITE_GITHUB_TOKEN` | Optional | Raises the GitHub API rate limit from 60/hr to 5000/hr for the live stats fetch |
+| `VITE_CONTACT_EMAIL` | Optional | Overrides the contact address (defaults to the one in `src/data/profile.ts`) |
+
+### Setting up the Formspree form (5 minutes)
+
+1. Sign up at [formspree.io](https://formspree.io) and create a new form.
+2. Point it at `imhimanshu758@gmail.com` as the recipient — messages land in that Gmail inbox.
+3. Copy the form id from the endpoint URL (`https://formspree.io/f/<FORM_ID>`).
+4. Put it in `.env` as `VITE_FORMSPREE_ID=<FORM_ID>`.
+5. Restart the dev server.
+
+Until then the form still works: submitting opens the visitor's mail app with the
+message prefilled, addressed to you.
+
+### Refreshing the GitHub data
+
+```bash
+GITHUB_TOKEN=ghp_xxx npm run fetch:github   # or: gh auth login && npm run fetch:github
+```
+
+This rewrites `src/data/github.json` with the current profile, repos, language
+breakdown and the last 52 weeks of contributions. The script falls back to
+`gh auth token` if `$GITHUB_TOKEN` is not set.
+
+---
+
+## Editing the content
+
+All hand-written content lives in one file:
+
+```
+src/data/profile.ts
+```
+
+| What | Where |
+| --- | --- |
+| Name, headline, bio, location, availability | `profile` |
+| Social links | `profile.socials` |
+| Skill groups and proficiency bars | `skillGroups` |
+| Timeline entries | `experience` |
+| Projects that are not public on GitHub | `extraProjects` |
+
+The email address is exported as `EMAIL` from the same file and is used by the
+nav, hero, contact form and footer.
+
+---
+
+## Deploying to GitHub Pages
+
+The repo includes a workflow at `.github/workflows/deploy.yml`.
+
+1. Push this folder to a GitHub repository.
+2. In the repo, go to **Settings → Pages → Build and deployment → Source**, choose
+   **GitHub Actions**.
+3. Push to `main` — the workflow builds and publishes the site.
+
+`vite.config.ts` uses `base: './'`, so the same build works from
+`himanshu0072510.github.io` (user site), a project page like
+`himanshu0072510.github.io/portfolio/`, or a custom domain.
+
+---
+
+## Project structure
+
+```
+src/
+├── components/
+│   ├── About.tsx          # bio, facts, timeline
+│   ├── Contact.tsx        # Formspree form + direct channels
+│   ├── Footer.tsx
+│   ├── GitHubSection.tsx  # live stats, contribution graph, languages
+│   ├── Hero.tsx
+│   ├── Nav.tsx            # side rail, scroll-spy, theme toggle
+│   ├── Projects.tsx       # public repos + additional work
+│   ├── Reveal.tsx         # scroll-in animation
+│   ├── Section.tsx
+│   ├── Skills.tsx
+│   └── icons.tsx          # GitHub mark
+├── data/
+│   ├── github.json        # generated — do not hand-edit
+│   └── profile.ts         # all hand-written content
+├── hooks/
+│   ├── useGitHub.ts       # live fetch + fallback
+│   └── useTheme.ts
+├── index.css              # design tokens, light/dark themes
+├── App.tsx
+└── main.tsx
+scripts/
+└── fetch-github.mjs       # regenerates src/data/github.json
+```
+
+## Notes
+
+- **Themes** — dark by default, follows `prefers-color-scheme`, with a manual
+  toggle in the nav. The choice is stored in `localStorage`.
+- **Accessibility** — `prefers-reduced-motion` disables the scroll animations,
+  and `?noanim=1` in the URL renders everything statically (useful for
+  screenshots).
+- **No API key required to view the site** — the GitHub REST API is called
+  anonymously, and the baked snapshot covers any rate-limit or network failure.

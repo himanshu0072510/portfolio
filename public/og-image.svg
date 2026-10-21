@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0b0b0d"/>
+  <g stroke="#ffffff" stroke-opacity="0.04">
+    <path d="M0 90h1200M0 180h1200M0 270h1200M0 360h1200M0 450h1200M0 540h1200"/>
+    <path d="M90 0v630M180 0v630M270 0v630M360 0v630M450 0v630M540 0v630M630 0v630M720 0v630M810 0v630M900 0v630M990 0v630M1080 0v630"/>
+  </g>
+  <circle cx="980" cy="150" r="220" fill="#ff5c39" fill-opacity="0.13"/>
+  <text x="80" y="180" font-family="Georgia, 'Times New Roman', serif" font-size="88" fill="#f2f2f4">Himanshu</text>
+  <text x="80" y="275" font-family="Georgia, 'Times New Roman', serif" font-size="88" fill="#ff5c39" font-style="italic">Agrahari</text>
+  <text x="80" y="345" font-family="ui-monospace, Menlo, monospace" font-size="26" fill="#8b8b98">Offline-first developer · github.com/himanshu0072510</text>
+  <text x="80" y="400" font-family="ui-monospace, Menlo, monospace" font-size="24" fill="#c9c9d1">Chrome extensions · React · TypeScript · Node.js</text>
+  <rect x="80" y="460" width="180" height="56" rx="14" fill="none" stroke="#26262d"/>
+  <text x="170" y="495" font-family="ui-monospace, Menlo, monospace" font-size="22" fill="#f2f2f4" text-anchor="middle">imhimanshu758</text>
+  <text x="80" y="580" font-family="ui-monospace, Menlo, monospace" font-size="20" fill="#8b8b98">imhimanshu758@gmail.com</text>
+</svg>
