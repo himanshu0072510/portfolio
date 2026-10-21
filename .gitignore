@@ -17,6 +17,9 @@ dist-ssr
 .env.*
 !.env.example
 
+# Locally installed agent skills (tools, not part of the site)
+.agents/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

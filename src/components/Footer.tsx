@@ -24,21 +24,21 @@ export function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub profile"
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               <GithubIcon className="h-4 w-4" />
             </a>
             <a
               href={`mailto:${EMAIL}`}
               aria-label="Email"
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               <Mail className="h-4 w-4" />
             </a>
             <a
               href="#top"
               aria-label="Back to top"
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               <ArrowUp className="h-4 w-4" />
             </a>

@@ -5,6 +5,9 @@ import { cn } from '../lib/utils'
  * A frame on the drawing sheet, with registration marks at the corners.
  * Boxes are used only where something is genuinely a container — elsewhere
  * the sheet is separated with hairline rules.
+ *
+ * The fill is solid, not translucent: a matte surface, with no gloss and
+ * nothing showing through it.
  */
 export function Sheet({
   children,
@@ -19,7 +22,7 @@ export function Sheet({
     <div
       className={cn(
         'relative border border-rule',
-        fill ? 'bg-surface/70' : 'bg-surface/30',
+        fill ? 'bg-surface' : 'bg-surface/60',
         className,
       )}
     >

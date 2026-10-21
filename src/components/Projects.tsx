@@ -108,7 +108,7 @@ export function Projects() {
                   href={project.sourceUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 border border-rule px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                  className="pressable inline-flex items-center gap-1.5 border border-control px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
                 >
                   Source
                   <ArrowUpRight className="h-3.5 w-3.5" />
@@ -119,7 +119,7 @@ export function Projects() {
                   href={project.demoUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 border border-rule px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                  className="pressable inline-flex items-center gap-1.5 border border-control px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
                 >
                   Live demo
                   <ExternalLink className="h-3.5 w-3.5" />
@@ -128,7 +128,7 @@ export function Projects() {
               {!project.sourceUrl && (
                 <a
                   href={`mailto:${EMAIL}?subject=${encodeURIComponent(`Request to see ${project.name}`)}`}
-                  className="inline-flex items-center gap-1.5 border border-rule px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                  className="pressable inline-flex items-center gap-1.5 border border-control px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
                 >
                   <Mail className="h-3.5 w-3.5" />
                   Ask for access

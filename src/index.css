@@ -1,48 +1,52 @@
 @import 'tailwindcss';
 
 /* ------------------------------------------------------------------ *
- * Design tokens — "blueprint" duotone
+ * Design tokens — matte black, duotone
  *
- * Dark  : chalk on prussian blue, as a technical drawing on blueprint.
- * Light : navy ink on pale drafting film.
- * Colour is a material here (chalk, ink, film), not decoration — so the
+ * Dark  : chalk on matte black. Nothing shiny — flat fills, hairline
+ *         rules, and a fine grain so the black reads as a surface
+ *         rather than a void.
+ * Light : the same sheet as matte paper, warm-neutral and low-gloss.
+ * Colour is a material here (chalk, ink, paper), not decoration — so the
  * palette is duotone with a single accent, used sparingly and on purpose.
  * ------------------------------------------------------------------ */
 :root,
 .dark {
-  --bg: #081726;
-  --bg-soft: #0b1e30;
-  --surface: #0c2033;
-  --surface-hi: #14304a;
-  --border: #466786;
-  --border-soft: #1c3d59;
-  --rule: #466d8a;
-  --rule-soft: #234b6b;
-  --fg: #e6f0f7;
-  --fg-soft: #afc6d8;
-  --muted: #7f99ad;
+  --bg: #0a0a0a;
+  --bg-soft: #101010;
+  --surface: #141414;
+  --surface-hi: #1c1c1c;
+  --border: #636363;
+  --border-soft: #262626;
+  --control: #636363;
+  --rule: #3f3f3f;
+  --rule-soft: #242424;
+  --fg: #ededed;
+  --fg-soft: #b9b9b9;
+  --muted: #8b8b8b;
   --accent: #ff7a4d;
-  --accent-fg: #170702;
-  --grid-line: rgba(230, 240, 247, 0.045);
-  --sheet-line: rgba(230, 240, 247, 0.075);
+  --accent-fg: #1a0a03;
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --sheet-line: rgba(255, 255, 255, 0.055);
 }
 
 .light {
-  --bg: #dce6ee;
-  --bg-soft: #d3dee8;
-  --surface: #edf3f8;
+  --bg: #e9e8e5;
+  --bg-soft: #e1e0dc;
+  --surface: #f6f5f2;
   --surface-hi: #ffffff;
-  --border: #738492;
-  --border-soft: #c3d0da;
-  --rule: #738594;
-  --rule-soft: #b0bfcb;
-  --fg: #0b1b2a;
-  --fg-soft: #35495c;
-  --muted: #48606f;
-  --accent: #a63508;
-  --accent-fg: #fff3ec;
-  --grid-line: rgba(11, 27, 42, 0.05);
-  --sheet-line: rgba(11, 27, 42, 0.07);
+  --border: #6f6f74;
+  --border-soft: #cfcecb;
+  --control: #6f6f74;
+  --rule: #a9a8a4;
+  --rule-soft: #d6d5d1;
+  --fg: #16161a;
+  --fg-soft: #44444b;
+  --muted: #62626a;
+  --accent: #b23c12;
+  --accent-fg: #fff4ee;
+  --grid-line: rgba(22, 22, 26, 0.045);
+  --sheet-line: rgba(22, 22, 26, 0.06);
 }
 
 @theme inline {
@@ -52,6 +56,7 @@
   --color-surface-hi: var(--surface-hi);
   --color-border: var(--border);
   --color-border-soft: var(--border-soft);
+  --color-control: var(--control);
   --color-rule: var(--rule);
   --color-rule-soft: var(--rule-soft);
   --color-fg: var(--fg);
@@ -64,30 +69,35 @@
   --font-sans: 'Chivo', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'Chivo Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
-  --animate-draw: draw 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
-  --animate-nib: nib 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
-  --animate-rise: rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-draw: draw 1s linear 0.25s both;
+  --animate-nib: nib 1s linear 0.25s both;
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-waterfall: waterfall 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-marquee: marquee 42s linear infinite;
 }
 
+/* The pen trace: a dash travelling the centreline. `pathLength="100"` on the
+   path normalises the units, so no length is ever guessed. */
 @keyframes draw {
   from {
-    transform: scaleX(0);
+    stroke-dashoffset: 100;
   }
   to {
-    transform: scaleX(1);
+    stroke-dashoffset: 0;
   }
 }
 
+/* The nib rides the same path with the same linear ease, so its tip and the
+   growing edge of the ink never drift apart. */
 @keyframes nib {
   0% {
     offset-distance: 0%;
     opacity: 0;
   }
-  8% {
+  5% {
     opacity: 1;
   }
-  92% {
+  88% {
     opacity: 1;
   }
   100% {
@@ -96,12 +106,31 @@
   }
 }
 
+/* An arrival is not a fade. Opacity flips to 1 almost immediately and the
+   movement carries the motion; nothing crossfades. */
 @keyframes rise {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(14px);
+    transform: translateY(16px);
   }
-  to {
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes waterfall {
+  0% {
+    opacity: 0;
+    transform: translateY(105%);
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
@@ -144,8 +173,24 @@
     }
   }
 
+  /* ?noanim=1 — render the final state of every entrance. */
+  .noanim,
+  .noanim *,
+  .noanim *::before,
+  .noanim *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
   body {
     background-color: var(--bg);
+    /* A fine, fixed grain so the black reads as a matte surface rather than
+       a void — and so large flat areas do not band. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-attachment: fixed;
     color: var(--fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
@@ -207,7 +252,33 @@
 @utility nib-travel {
   offset-path: var(--stroke-path);
   offset-rotate: auto;
-  animation: nib 1.5s cubic-bezier(0.65, 0, 0.35, 1) 0.25s both;
+  animation: nib 1s linear 0.25s both;
+}
+
+/**
+ * A press that reads as tactile: the dip is fast and linear, the release
+ * springs back with a little overshoot.
+ */
+@utility pressable {
+  transition: transform 420ms cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:active {
+    transform: scale(0.965);
+    transition: transform 110ms cubic-bezier(0.4, 0, 1, 1);
+  }
+}
+
+/** A line of type that rises out of a mask, the way a title card is set. */
+@utility line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+  margin-bottom: -0.06em;
+}
+
+@utility line-rise {
+  display: block;
+  animation: waterfall 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /** Small caps used for measurement labels — never for decoration. */

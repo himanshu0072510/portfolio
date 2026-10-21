@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { Activity, ExternalLink, GitFork, Star, Users } from 'lucide-react'
 import { languageColor, useGitHub } from '../hooks/useGitHub'
+import { Counter } from './Counter'
 import { Section } from './Section'
 import { Sheet } from './Sheet'
 
@@ -70,14 +71,14 @@ export function GitHubSection() {
     >
       {/* ------------- schedule of figures ------------- */}
       <dl className="grid grid-cols-2 gap-px border border-rule bg-rule lg:grid-cols-4">
-        {cards.map((card) => (
+        {cards.map((card, i) => (
           <div key={card.label} className="bg-surface px-5 py-5">
             <div className="flex items-center justify-between gap-2">
               <dt className="measure text-muted/80">{card.label}</dt>
               <card.icon className="h-3.5 w-3.5 text-accent" aria-hidden />
             </div>
             <dd className="mt-3 font-display text-4xl font-bold leading-none tracking-tight text-fg">
-              {card.value}
+              <Counter value={card.value} delay={i * 110} />
             </dd>
             <p className="measure mt-2 text-muted">{card.sub}</p>
           </div>
@@ -198,7 +199,7 @@ export function GitHubSection() {
           href={profile.html_url}
           target="_blank"
           rel="noreferrer"
-          className="group flex flex-col justify-between border border-rule p-6 transition-colors hover:border-accent"
+          className="pressable group flex flex-col justify-between border border-control p-6 transition-colors hover:border-accent"
         >
           <div>
             <p className="measure text-muted/80">Reference</p>

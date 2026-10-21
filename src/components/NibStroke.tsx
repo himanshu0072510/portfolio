@@ -5,8 +5,13 @@ import { cn } from '../lib/utils'
  * The nib stroke — the one memorable thing on the sheet.
  *
  * It is a real variable-width stroke: thin where the nib lands, swelling
- * through the belly, tapering at the lift. It draws itself once on load,
- * with the nib travelling along the centreline as it goes.
+ * through the belly, tapering at the lift.
+ *
+ * The ink is revealed by a wide stroke travelling the centreline inside an
+ * SVG mask. `pathLength="100"` normalises the dash units so the length is
+ * never guessed, and the dash runs on a linear ease — the same ease the nib
+ * rides — so the nib tip and the growing edge of the ink stay locked
+ * together. A pen does not bounce, so neither does this.
  */
 export function NibStroke({ className }: { className?: string }) {
   return (
@@ -17,16 +22,27 @@ export function NibStroke({ className }: { className?: string }) {
       aria-label="A drawn nib stroke, thin at the start, swelling through the middle and tapering at the end."
     >
       <defs>
-        <clipPath id="nib-reveal">
-          <rect
-            x="-12"
-            y="-12"
-            width="284"
-            height="174"
-            style={{ transformBox: 'fill-box', transformOrigin: 'left center' }}
+        <mask
+          id="ink-reveal"
+          maskUnits="userSpaceOnUse"
+          x="-24"
+          y="-24"
+          width="308"
+          height="198"
+        >
+          <rect x="-24" y="-24" width="308" height="198" fill="black" />
+          {/* the brush: a fat round-capped stroke following the centreline */}
+          <path
+            d={STROKE_CENTRELINE}
+            pathLength={100}
+            fill="none"
+            stroke="white"
+            strokeWidth={18}
+            strokeLinecap="round"
+            strokeDasharray={100}
             className="animate-draw"
           />
-        </clipPath>
+        </mask>
       </defs>
 
       {/* the path the nib travels — a guide, not the ink */}
@@ -40,9 +56,7 @@ export function NibStroke({ className }: { className?: string }) {
       />
 
       {/* the ink */}
-      <g clipPath="url(#nib-reveal)">
-        <path d={STROKE_OUTLINE} fill="var(--accent)" />
-      </g>
+      <path d={STROKE_OUTLINE} fill="var(--accent)" mask="url(#ink-reveal)" />
 
       {/* the nib, riding the path while the stroke is drawn */}
       <rect

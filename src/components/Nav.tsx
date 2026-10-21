@@ -125,14 +125,14 @@ export function Nav() {
               target="_blank"
               rel="noreferrer"
               aria-label="GitHub profile"
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               <GithubIcon className="h-4 w-4" />
             </a>
             <a
               href={`mailto:${EMAIL}`}
               aria-label="Send an email"
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               <Mail className="h-4 w-4" />
             </a>
@@ -140,7 +140,7 @@ export function Nav() {
               type="button"
               onClick={toggle}
               aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-              className="grid h-9 w-9 place-items-center border border-rule text-muted transition-colors hover:border-accent hover:text-accent"
+              className="pressable grid h-9 w-9 place-items-center border border-control text-muted transition-colors hover:border-accent hover:text-accent"
             >
               {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
@@ -156,8 +156,8 @@ export function Nav() {
       {/* ---------------- Mobile bar ---------------- */}
       <header
         className={cn(
-          'fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b px-5 py-3 backdrop-blur-xl transition-colors lg:hidden',
-          scrolled ? 'border-rule bg-bg/90' : 'border-transparent bg-bg/70',
+          'fixed inset-x-0 top-0 z-50 flex items-center justify-between border-b px-5 py-3 transition-colors lg:hidden',
+          scrolled ? 'border-rule bg-bg' : 'border-transparent bg-bg',
         )}
       >
         <a href="#top" className="flex items-center gap-2.5">
@@ -178,7 +178,7 @@ export function Nav() {
             type="button"
             onClick={toggle}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
-            className="grid h-9 w-9 place-items-center border border-rule text-muted"
+            className="pressable grid h-9 w-9 place-items-center border border-control text-muted"
           >
             {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </button>
@@ -187,7 +187,7 @@ export function Nav() {
             onClick={() => setOpen((v) => !v)}
             aria-label="Toggle navigation menu"
             aria-expanded={open}
-            className="grid h-9 w-9 place-items-center border border-rule text-fg"
+            className="pressable grid h-9 w-9 place-items-center border border-control text-fg"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -197,7 +197,7 @@ export function Nav() {
       {/* ---------------- Mobile sheet ---------------- */}
       <div
         className={cn(
-          'fixed inset-0 z-40 bg-bg/97 backdrop-blur-xl transition-opacity duration-300 lg:hidden',
+          'fixed inset-0 z-40 bg-bg transition-opacity duration-300 lg:hidden',
           open ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0',
         )}
       >

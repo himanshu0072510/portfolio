@@ -108,7 +108,7 @@ export function Contact() {
   )
 
   const inputClass =
-    'mt-2 w-full border border-rule bg-bg px-4 py-3 text-sm text-fg outline-none transition-colors placeholder:text-muted/50 focus:border-accent'
+    'mt-2 w-full border border-control bg-bg px-4 py-3 text-sm text-fg outline-none transition-colors placeholder:text-muted/50 focus:border-accent'
 
   return (
     <Section
@@ -135,7 +135,7 @@ export function Contact() {
               <button
                 type="button"
                 onClick={() => setState('idle')}
-                className="mt-7 border border-rule px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                className="pressable mt-7 border border-control px-4 py-2.5 text-sm font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
               >
                 Send another
               </button>
@@ -260,7 +260,7 @@ export function Contact() {
                 </button>
                 <a
                   href={`mailto:${EMAIL}?subject=${mailtoSubject}&body=${mailtoBody}`}
-                  className="inline-flex items-center gap-2 border border-rule px-5 py-3 text-sm font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+                  className="pressable inline-flex items-center gap-2 border border-control px-5 py-3 text-sm font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
                 >
                   <Mail className="h-4 w-4" aria-hidden />
                   Use my own mail app
@@ -280,7 +280,7 @@ export function Contact() {
             <button
               type="button"
               onClick={copyEmail}
-              className="mt-5 inline-flex items-center gap-2 border border-rule px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
+              className="pressable mt-5 inline-flex items-center gap-2 border border-control px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-accent hover:text-accent"
             >
               {copied ? (
                 <>
@@ -314,7 +314,7 @@ export function Contact() {
               href={`https://github.com/${profile.login}`}
               target="_blank"
               rel="noreferrer"
-              className="group mt-4 flex items-center justify-between border border-rule px-4 py-3.5 transition-colors hover:border-accent"
+              className="pressable group mt-4 flex items-center justify-between border border-control px-4 py-3.5 transition-colors hover:border-accent"
             >
               <span className="flex items-center gap-3">
                 <GithubIcon className="h-4 w-4 text-accent" />
@@ -326,7 +326,7 @@ export function Contact() {
               href="https://himanshu0072510.github.io/gloss/"
               target="_blank"
               rel="noreferrer"
-              className="group mt-2.5 flex items-center justify-between border border-rule px-4 py-3.5 transition-colors hover:border-accent"
+              className="pressable group mt-2.5 flex items-center justify-between border border-control px-4 py-3.5 transition-colors hover:border-accent"
             >
               <span className="flex items-center gap-3">
                 <Sparkles className="h-4 w-4 text-accent" />
