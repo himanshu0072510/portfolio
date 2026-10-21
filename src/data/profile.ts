@@ -5,7 +5,10 @@
  */
 
 export const GITHUB_LOGIN = 'himanshu0072510'
-export const EMAIL = 'imhimanshu758@gmail.com'
+
+/** Public contact address. Override with VITE_CONTACT_EMAIL in .env. */
+export const EMAIL =
+  (import.meta.env.VITE_CONTACT_EMAIL as string | undefined)?.trim() || 'imhimanshu758@gmail.com'
 
 export const profile = {
   name: 'Himanshu Agrahari',
