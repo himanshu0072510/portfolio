@@ -10,7 +10,7 @@
  * GraphQL, which needs a token we do not want to ship to the browser.
  */
 import { execFileSync } from 'node:child_process'
-import { writeFile, mkdir } from 'node:fs/promises'
+import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -59,31 +59,71 @@ async function getJSON(url, extraHeaders = {}) {
  * public endpoint, which only ever returns public repos.
  */
 async function fetchRepos() {
-  const url = token
-    ? `https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner`
-    : `https://api.github.com/users/${LOGIN}/repos?per_page=100&type=owner&sort=updated`
+  const map = (all) =>
+    all
+      .filter((r) => !r.fork && !EXCLUDE_REPOS.has(r.name))
+      .map((r) => ({
+        name: r.name,
+        description: r.description,
+        private: Boolean(r.private),
+        html_url: r.html_url,
+        homepage: r.homepage || null,
+        language: r.language,
+        stargazers_count: r.stargazers_count,
+        forks_count: r.forks_count,
+        watchers_count: r.watchers_count,
+        open_issues_count: r.open_issues_count,
+        topics: r.topics ?? [],
+        size: r.size,
+        created_at: r.created_at,
+        updated_at: r.updated_at,
+        pushed_at: r.pushed_at,
+        license: r.license?.spdx_id ?? null,
+      }))
 
-  const all = await getJSON(url)
-  return all
-    .filter((r) => !r.fork && !EXCLUDE_REPOS.has(r.name))
-    .map((r) => ({
-      name: r.name,
-      description: r.description,
-      private: Boolean(r.private),
-      html_url: r.html_url,
-      homepage: r.homepage || null,
-      language: r.language,
-      stargazers_count: r.stargazers_count,
-      forks_count: r.forks_count,
-      watchers_count: r.watchers_count,
-      open_issues_count: r.open_issues_count,
-      topics: r.topics ?? [],
-      size: r.size,
-      created_at: r.created_at,
-      updated_at: r.updated_at,
-      pushed_at: r.pushed_at,
-      license: r.license?.spdx_id ?? null,
-    }))
+  if (token) {
+    try {
+      // The only endpoint that sees private repos.
+      return map(
+        await getJSON(
+          `https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner`,
+        ),
+      )
+    } catch (err) {
+      console.warn(`! Authenticated repo list unavailable (${err.message}).`)
+      console.warn('  Falling back to public repos. Add a PAT as the GITHUB_PAT secret')
+      console.warn('  to keep private projects in the build output.')
+    }
+  }
+
+  const publicRepos = map(
+    await getJSON(
+      `https://api.github.com/users/${LOGIN}/repos?per_page=100&type=owner&sort=updated`,
+    ),
+  )
+
+  // The public API cannot see private repos, so carry them over from the
+  // previous snapshot instead of dropping them.
+  const previous = await readSnapshot()
+  const carriedOver = previous.repos.filter(
+    (r) => r.private && !publicRepos.some((p) => p.name === r.name),
+  )
+  if (carriedOver.length) {
+    console.log(`  carried over ${carriedOver.length} private repo(s) from the last snapshot`)
+  }
+
+  return [...publicRepos, ...carriedOver]
+}
+
+/** Reads the existing snapshot, if there is one. */
+async function readSnapshot() {
+  try {
+    const raw = await readFile(OUT, 'utf8')
+    const parsed = JSON.parse(raw)
+    return { repos: Array.isArray(parsed.repos) ? parsed.repos : [] }
+  } catch {
+    return { repos: [] }
+  }
 }
 
 /** Contribution calendar for the last year — GraphQL only, needs a token. */
@@ -129,9 +169,18 @@ async function fetchContributions() {
 async function main() {
   console.log(`Fetching GitHub data for ${LOGIN}...`)
 
-  const profile = await getJSON(`https://api.github.com/users/${LOGIN}`)
-  const repos = await fetchRepos()
-  const contributions = await fetchContributions()
+  let profile, repos, contributions
+  try {
+    profile = await getJSON(`https://api.github.com/users/${LOGIN}`)
+    repos = await fetchRepos()
+    contributions = await fetchContributions()
+  } catch (err) {
+    // A rate limit or a flaky network must never break the deploy — the
+    // committed snapshot is already good enough to build from.
+    console.warn(`✗ ${err.message}`)
+    console.warn('  Keeping the existing src/data/github.json snapshot. Build continues.')
+    return
+  }
 
   const languages = {}
   for (const repo of repos) {

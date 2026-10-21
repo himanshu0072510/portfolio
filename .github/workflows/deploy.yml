@@ -30,7 +30,10 @@ jobs:
 
       - name: Refresh GitHub data
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # A PAT is needed to see private repos. Without one the script falls
+          # back to the public API and carries private repos over from the
+          # committed snapshot.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_PAT || secrets.GITHUB_TOKEN }}
         run: npm run fetch:github
 
       - name: Build

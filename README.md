@@ -95,6 +95,23 @@ The repo includes a workflow at `.github/workflows/deploy.yml`.
 `himanshu0072510.github.io` (user site), a project page like
 `himanshu0072510.github.io/portfolio/`, or a custom domain.
 
+### Keeping private projects in the build
+
+The workflow's automatic `GITHUB_TOKEN` cannot list your private repositories,
+so **InkNote** is carried over from the committed `src/data/github.json`
+snapshot rather than being re-fetched. To refresh private projects too, add a
+classic PAT as a repository secret:
+
+**Settings → Secrets and variables → Actions → New repository secret**
+
+| Secret | Value |
+| --- | --- |
+| `GITHUB_PAT` | A classic PAT with `repo` scope (needed to read private repos) |
+
+The script then refreshes every repository, private ones included. It never
+fails the build — if the API is rate-limited or unreachable, the existing
+snapshot is kept and the deploy continues.
+
 ---
 
 ## Project structure
