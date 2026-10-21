@@ -4,6 +4,7 @@ import baked from '../data/github.json'
 export interface GhRepo {
   name: string
   description: string | null
+  private: boolean
   html_url: string
   homepage: string | null
   language: string | null
@@ -47,6 +48,27 @@ type Status = 'loading' | 'live' | 'cached'
 
 const API = 'https://api.github.com'
 
+/**
+ * The repo that hosts this site. It is not a project, so it never appears in
+ * the Projects section.
+ */
+const SITE_REPOS = new Set(['portfolio'])
+
+/** Repos captured at build time — includes private ones the public API hides. */
+const bakedRepos = (baked.repos as GhRepo[]).filter((r) => !SITE_REPOS.has(r.name))
+
+/**
+ * Public repos come from the live API. Private repos are only visible to a
+ * token, so those are served from the build-time snapshot.
+ */
+function mergeRepos(live: GhRepo[]): GhRepo[] {
+  const visible = live.filter((r) => !SITE_REPOS.has(r.name))
+  const privateOnes = bakedRepos.filter(
+    (r) => r.private && !visible.some((l) => l.name === r.name),
+  )
+  return [...visible, ...privateOnes]
+}
+
 function headers(): HeadersInit {
   const token = import.meta.env.VITE_GITHUB_TOKEN as string | undefined
   const base: HeadersInit = { Accept: 'application/vnd.github+json' }
@@ -60,7 +82,7 @@ function headers(): HeadersInit {
  */
 export function useGitHub() {
   const [profile, setProfile] = useState<GhProfile>(baked.profile as GhProfile)
-  const [repos, setRepos] = useState<GhRepo[]>(baked.repos as GhRepo[])
+  const [repos, setRepos] = useState<GhRepo[]>(bakedRepos)
   const [status, setStatus] = useState<Status>('loading')
 
   useEffect(() => {
@@ -84,27 +106,29 @@ export function useGitHub() {
         if (!p?.login || !Array.isArray(r)) throw new Error('Unexpected API shape')
 
         setProfile({ ...baked.profile, ...p, blog: p.blog || '' })
-        setRepos(
-          (r as Record<string, unknown>[])
-            .filter((repo) => !repo.fork)
-            .map((repo) => ({
-              name: repo.name as string,
-              description: (repo.description as string) ?? null,
-              html_url: repo.html_url as string,
-              homepage: (repo.homepage as string) || null,
-              language: (repo.language as string) ?? null,
-              stargazers_count: repo.stargazers_count as number,
-              forks_count: repo.forks_count as number,
-              watchers_count: (repo.watchers_count as number) ?? 0,
-              open_issues_count: (repo.open_issues_count as number) ?? 0,
-              topics: (repo.topics as string[]) ?? [],
-              size: (repo.size as number) ?? 0,
-              created_at: repo.created_at as string,
-              updated_at: repo.updated_at as string,
-              pushed_at: repo.pushed_at as string,
-              license: ((repo.license as { spdx_id?: string } | null)?.spdx_id as string) ?? null,
-            })),
-        )
+
+        const live = (r as Record<string, unknown>[])
+          .filter((repo) => !repo.fork)
+          .map((repo) => ({
+            name: repo.name as string,
+            description: (repo.description as string) ?? null,
+            private: false,
+            html_url: repo.html_url as string,
+            homepage: (repo.homepage as string) || null,
+            language: (repo.language as string) ?? null,
+            stargazers_count: repo.stargazers_count as number,
+            forks_count: repo.forks_count as number,
+            watchers_count: (repo.watchers_count as number) ?? 0,
+            open_issues_count: (repo.open_issues_count as number) ?? 0,
+            topics: (repo.topics as string[]) ?? [],
+            size: (repo.size as number) ?? 0,
+            created_at: repo.created_at as string,
+            updated_at: repo.updated_at as string,
+            pushed_at: repo.pushed_at as string,
+            license: ((repo.license as { spdx_id?: string } | null)?.spdx_id as string) ?? null,
+          }))
+
+        setRepos(mergeRepos(live))
         setStatus('live')
       } catch (err) {
         if ((err as Error)?.name === 'AbortError') return

@@ -1,11 +1,50 @@
-import { ArrowUpRight, GitFork, Lock, Star } from 'lucide-react'
-import { extraProjects, EMAIL } from '../data/profile'
+import { ArrowUpRight, ExternalLink, GitFork, Lock, Mail, Star } from 'lucide-react'
+import { EMAIL, localProjects, projectDetails } from '../data/profile'
 import { languageColor, useGitHub } from '../hooks/useGitHub'
 import { Section } from './Section'
 import { Reveal } from './Reveal'
 
+type ProjectCard = {
+  name: string
+  description: string
+  language: string | null
+  stars: number
+  tags: string[]
+  sourceUrl: string | null
+  demoUrl: string | null
+  access: 'public' | 'private' | 'local'
+  status?: string
+}
+
 export function Projects() {
   const { repos } = useGitHub()
+
+  const cards: ProjectCard[] = [
+    ...repos.map((repo) => {
+      const override = projectDetails[repo.name]
+      return {
+        name: repo.name,
+        description: override?.description ?? repo.description ?? 'No description provided.',
+        language: repo.language,
+        stars: repo.stargazers_count,
+        tags: override?.tags ?? repo.topics,
+        sourceUrl: repo.private ? null : repo.html_url,
+        demoUrl: repo.private ? null : (override?.demoUrl ?? repo.homepage),
+        access: repo.private ? ('private' as const) : ('public' as const),
+      }
+    }),
+    ...localProjects.map((project) => ({
+      name: project.name,
+      description: project.description,
+      language: project.language,
+      stars: 0,
+      tags: project.tags,
+      sourceUrl: null,
+      demoUrl: null,
+      access: 'local' as const,
+      status: project.status,
+    })),
+  ]
 
   return (
     <Section
@@ -14,16 +53,15 @@ export function Projects() {
       title="Projects"
       lede="Things I have built, shipped and learned from — public repos pulled live from GitHub."
     >
-      {/* ---------------- public repos ---------------- */}
       <div className="grid gap-4">
-        {repos.length === 0 && (
+        {cards.length === 0 && (
           <p className="rounded-2xl border border-border bg-surface/50 p-6 text-sm text-muted">
-            No public repositories found yet.
+            No projects found yet.
           </p>
         )}
 
-        {repos.map((repo, i) => (
-          <Reveal key={repo.name} delay={i * 80}>
+        {cards.map((project, i) => (
+          <Reveal key={project.name} delay={i * 80}>
             <article className="group relative overflow-hidden rounded-2xl border border-border bg-surface/50 p-6 transition-colors hover:border-accent/40">
               <div
                 className="pointer-events-none absolute -right-24 -top-24 h-56 w-56 rounded-full opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
@@ -33,42 +71,42 @@ export function Projects() {
               <div className="relative flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <h3 className="font-display text-2xl text-fg">{repo.name}</h3>
-                    {repo.language && (
+                    <h3 className="font-display text-2xl text-fg">{project.name}</h3>
+                    {project.language && (
                       <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] text-muted">
                         <span
                           className="h-2 w-2 rounded-full"
-                          style={{ background: languageColor(repo.language) }}
+                          style={{ background: languageColor(project.language) }}
                         />
-                        {repo.language}
+                        {project.language}
                       </span>
                     )}
-                    {repo.stargazers_count > 0 && (
+                    {project.stars > 0 && (
                       <span className="inline-flex items-center gap-1 font-mono text-[10px] text-muted">
                         <Star className="h-3 w-3" />
-                        {repo.stargazers_count}
+                        {project.stars}
                       </span>
                     )}
-                    {repo.forks_count > 0 && (
-                      <span className="inline-flex items-center gap-1 font-mono text-[10px] text-muted">
-                        <GitFork className="h-3 w-3" />
-                        {repo.forks_count}
+                    {project.access !== 'public' && (
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] text-muted">
+                        <Lock className="h-2.5 w-2.5" />
+                        {project.status ?? (project.access === 'private' ? 'Private repo' : 'Not public')}
                       </span>
                     )}
                   </div>
 
                   <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">
-                    {repo.description || 'No description provided.'}
+                    {project.description}
                   </p>
 
-                  {repo.topics.length > 0 && (
+                  {project.tags.length > 0 && (
                     <div className="mt-4 flex flex-wrap gap-1.5">
-                      {repo.topics.slice(0, 8).map((topic) => (
+                      {project.tags.slice(0, 8).map((tag) => (
                         <span
-                          key={topic}
+                          key={tag}
                           className="rounded-md bg-border-soft px-2 py-1 font-mono text-[10px] text-muted"
                         >
-                          {topic}
+                          {tag}
                         </span>
                       ))}
                     </div>
@@ -76,34 +114,37 @@ export function Projects() {
                 </div>
 
                 <div className="flex shrink-0 flex-col items-end gap-2">
-                  <a
-                    href={repo.html_url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-xs font-medium text-fg transition-colors hover:border-accent/50 hover:text-accent"
-                  >
-                    Source
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                  {repo.homepage && (
+                  {project.sourceUrl && (
                     <a
-                      href={repo.homepage}
+                      href={project.sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-xs font-medium text-fg transition-colors hover:border-accent/50 hover:text-accent"
+                    >
+                      Source
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                  )}
+                  {project.demoUrl && (
+                    <a
+                      href={project.demoUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-xs font-medium text-accent transition-colors hover:bg-surface-hi"
                     >
                       Live demo
-                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                   )}
-                  <p className="font-mono text-[10px] text-muted/70">
-                    updated{' '}
-                    {new Date(repo.updated_at).toLocaleDateString('en-GB', {
-                      day: 'numeric',
-                      month: 'short',
-                      year: '2-digit',
-                    })}
-                  </p>
+                  {!project.sourceUrl && (
+                    <a
+                      href={`mailto:${EMAIL}?subject=${encodeURIComponent(`Request to see ${project.name}`)}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3.5 py-2 text-xs font-medium text-fg transition-colors hover:border-accent/50 hover:text-accent"
+                    >
+                      <Mail className="h-3.5 w-3.5" />
+                      Ask for access
+                    </a>
+                  )}
                 </div>
               </div>
             </article>
@@ -111,57 +152,15 @@ export function Projects() {
         ))}
       </div>
 
-      {/* ---------------- additional work ---------------- */}
-      <div className="mt-14">
-        <Reveal>
-          <div className="mb-6 flex items-center gap-3">
-            <span className="font-mono text-[11px] tracking-widest text-muted uppercase">
-              More I have worked on
-            </span>
-            <span className="h-px flex-1 bg-border" />
-          </div>
-        </Reveal>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {extraProjects.map((project, i) => (
-            <Reveal key={project.name} delay={i * 90}>
-              <article className="flex h-full flex-col rounded-2xl border border-border bg-surface/40 p-6 transition-colors hover:border-accent/40">
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-display text-xl text-fg">{project.name}</h3>
-                  <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] text-muted">
-                    <Lock className="h-2.5 w-2.5" />
-                    {project.status}
-                  </span>
-                </div>
-
-                <p className="mt-3 flex-1 text-[13px] leading-relaxed text-muted">
-                  {project.description}
-                </p>
-
-                <div className="mt-5 flex flex-wrap gap-1.5">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded-md bg-border-soft px-2 py-1 font-mono text-[10px] text-muted"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal delay={120}>
-          <p className="mt-6 text-center font-mono text-[11px] text-muted/70">
-            Want the code? Ask me and I will open it up —{' '}
-            <a href={`mailto:${EMAIL}`} className="text-accent underline underline-offset-4">
-              send a mail
-            </a>
-          </p>
-        </Reveal>
-      </div>
+      <Reveal delay={120}>
+        <p className="mt-6 flex items-center justify-center gap-2 text-center font-mono text-[11px] text-muted/70">
+          <GitFork className="h-3.5 w-3.5" />
+          Want the code? Ask me and I will open it up —{' '}
+          <a href={`mailto:${EMAIL}`} className="text-accent underline underline-offset-4">
+            send a mail
+          </a>
+        </p>
+      </Reveal>
     </Section>
   )
 }

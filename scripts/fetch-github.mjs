@@ -19,6 +19,12 @@ const OUT = resolve(__dirname, '../src/data/github.json')
 
 const LOGIN = process.env.GITHUB_LOGIN || 'himanshu0072510'
 
+/**
+ * The repo that hosts this site. It is not a project, so it is left out of
+ * the Projects section.
+ */
+const EXCLUDE_REPOS = new Set(['portfolio'])
+
 function getToken() {
   if (process.env.GITHUB_TOKEN) return process.env.GITHUB_TOKEN.trim()
   if (process.env.GH_TOKEN) return process.env.GH_TOKEN.trim()
@@ -45,16 +51,25 @@ async function getJSON(url, extraHeaders = {}) {
   return res.json()
 }
 
-/** Public repos, forks excluded, newest first. */
+/**
+ * Owned repos, forks excluded, newest first.
+ *
+ * With a token we ask for the authenticated user's repos so that private
+ * projects (InkNote) are included too. Without one we fall back to the
+ * public endpoint, which only ever returns public repos.
+ */
 async function fetchRepos() {
-  const all = await getJSON(
-    `https://api.github.com/users/${LOGIN}/repos?per_page=100&type=owner&sort=updated`,
-  )
+  const url = token
+    ? `https://api.github.com/user/repos?per_page=100&sort=updated&affiliation=owner`
+    : `https://api.github.com/users/${LOGIN}/repos?per_page=100&type=owner&sort=updated`
+
+  const all = await getJSON(url)
   return all
-    .filter((r) => !r.fork)
+    .filter((r) => !r.fork && !EXCLUDE_REPOS.has(r.name))
     .map((r) => ({
       name: r.name,
       description: r.description,
+      private: Boolean(r.private),
       html_url: r.html_url,
       homepage: r.homepage || null,
       language: r.language,

@@ -26,15 +26,17 @@ export function GitHubSection() {
     for (const repo of repos) {
       if (repo.language) langs[repo.language] = (langs[repo.language] || 0) + repo.size
     }
-    return { stars, forks, langs }
+    const publicCount = repos.filter((r) => !r.private).length
+    const privateCount = repos.length - publicCount
+    return { stars, forks, langs, publicCount, privateCount }
   }, [repos])
 
   const cards = [
     {
       icon: GitFork,
       label: 'Repositories',
-      value: profile.public_repos + profile.total_private_repos,
-      sub: `${profile.public_repos} public`,
+      value: repos.length,
+      sub: `${totals.publicCount} public · ${totals.privateCount} private`,
     },
     { icon: Star, label: 'Total stars', value: totals.stars, sub: `${totals.forks} forks` },
     { icon: Users, label: 'Followers', value: profile.followers, sub: `${profile.following} following` },

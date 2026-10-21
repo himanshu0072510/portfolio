@@ -95,29 +95,38 @@ export const skillGroups: SkillGroup[] = [
 ]
 
 /**
- * Projects that are not (yet) public on GitHub, or that deserve more context
- * than the repo description gives. Public repos are pulled live from the API.
+ * Extra copy for specific repos, keyed by repo name. Used where the GitHub
+ * description is too short to do the project justice.
  */
-export const extraProjects = [
-  {
-    name: 'PDF Ink',
-    repo: 'pdf-ink',
+export const projectDetails: Record<
+  string,
+  { description?: string; tags?: string[]; demoUrl?: string }
+> = {
+  gloss: {
     description:
-      'A Chrome extension (Manifest V3) for drawing on any PDF in the browser. Eight pen nibs with real pressure and speed response, palm rejection, undo/redo across pages, and PNG export — with a Pro tier that writes the ink back as real vector geometry into the PDF. Nothing is uploaded; the file never leaves the machine.',
-    tags: ['Chrome Extension', 'Manifest V3', 'Canvas', 'TypeScript'],
-    status: 'In development',
-    href: null,
-    accent: true,
+      'Select a word on any page and Gloss tells you what it means in the sentence you are reading — not the nine meanings a dictionary lists and leaves you to guess. It runs offline, needs no account, and never sends anything anywhere. Ships as a Chrome extension and a web app, with the disambiguation engine, a command-line tool and an MCP server inside.',
+    tags: ['Chrome Extension', 'WordNet', 'Node.js', 'MCP'],
+    demoUrl: 'https://himanshu0072510.github.io/gloss/',
   },
+  InkNote: {
+    description:
+      'A handwriting notebook that lives entirely in the browser. Write on a tablet with a stylus and real pen dynamics — eight nibs with pressure- and speed-shaped strokes, palm rejection, and a three-layer canvas that never shifts under the pen. Annotate PDFs, give every page the paper it should have (A6 to Tabloid, portrait or landscape, any colour or template), and export as PNG, PDF, or one backup file. No account, no upload, no server.',
+    tags: ['React', 'TypeScript', 'Canvas', 'Pen input', 'IndexedDB'],
+  },
+}
+
+/**
+ * Projects that are not published on GitHub at all. Kept here so the Projects
+ * section shows a complete body of work.
+ */
+export const localProjects = [
   {
     name: 'Instagram Ads Auto-Reply',
-    repo: 'instagram-ads-auto-reply',
     description:
       'An automated DM responder for Instagram Ads built on the official Meta Messaging API. Webhooks receive the message, a template reply goes back with a clickable button, and the whole thing runs 24/7 from a Node/Express server with helmet, CORS and rate limiting in place.',
+    language: 'JavaScript',
     tags: ['Node.js', 'Express', 'Meta API', 'Webhooks'],
     status: 'Shipped',
-    href: null,
-    accent: false,
   },
 ]
 

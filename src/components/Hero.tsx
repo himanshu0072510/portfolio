@@ -25,7 +25,7 @@ export function Hero() {
   }, [])
 
   const stats = [
-    { label: 'Repos', value: gh.public_repos + gh.total_private_repos },
+    { label: 'Repos', value: repos.length },
     { label: 'Stars', value: repos.reduce((sum, r) => sum + r.stargazers_count, 0) },
     { label: 'Since', value: new Date(gh.created_at).getFullYear() },
   ]
@@ -166,9 +166,9 @@ export function Hero() {
             </dl>
 
             <div className="mt-5 flex items-center justify-between rounded-xl border border-border-soft bg-bg-soft/60 px-4 py-3">
-              <span className="font-mono text-[11px] text-muted">Contribution streak</span>
+              <span className="font-mono text-[11px] text-muted">Shipped projects</span>
               <span className="font-mono text-xs text-fg-soft">
-                {gh.public_repos + gh.total_private_repos} public repos
+                {repos.length} on GitHub
               </span>
             </div>
           </div>
